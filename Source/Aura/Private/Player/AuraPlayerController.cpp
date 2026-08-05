@@ -72,53 +72,18 @@ void AAuraPlayerController::CursorTrace()
 		LastActor = ThisActor;
 		ThisActor = CursorHit.GetActor();
 
-		// Line trace from cursor. There are several scenarios:
-		// A. LastActor is null, ThisActor is null
-		//		- Do nothing
-		// B. LastActor is null, ThisActor is valid
-		//		- Highlight ThisActor
-		// C. LastActor is valid, ThisActor is null
-		//		- Unhighlight LastActor
-		// D. LastActor is valid, ThisActor is valid but different
-		//		- Unhighlight LastActor
-		//		- Highlight ThisActor
-		// E. LastActor is valid, ThisActor is valid and the same
-		//		- Do nothing
-
-		if (LastActor == nullptr)
+		if (!LastActor && ThisActor)
 		{
-			if (ThisActor != nullptr)
-			{
-				// Case B
-				ThisActor->HighlightActor();
-			}
-			else
-			{
-				// Case A
-				// Do nothing
-			}
+			ThisActor->HighlightActor();
 		}
-		else
+		else if (LastActor && !ThisActor)
 		{
-			if (ThisActor == nullptr)
-			{
-				// Case C
-				LastActor->UnHighlightActor();
-			}
-			else // Both actors are valid
-			{
-				if (LastActor != ThisActor)
-				{
-					// Case D
-					LastActor->UnHighlightActor();
-					ThisActor->HighlightActor();
-				}
-				else
-				{
-					// Case E
-					// Do nothing
-				}
-			}
+			LastActor->UnHighlightActor();
+		}
+		else if (LastActor && ThisActor && LastActor != ThisActor)
+		{
+			LastActor->UnHighlightActor();
+			ThisActor->HighlightActor();
 		}
 	}
 }
