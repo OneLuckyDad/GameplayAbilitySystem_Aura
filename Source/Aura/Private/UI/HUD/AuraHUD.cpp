@@ -18,6 +18,8 @@ void AAuraHUD::InitOverlay(APlayerController* PlayerController, APlayerState* Pl
 
 	OverlayWidget->SetWidgetController(WidgetController);
 
+	WidgetController->BroadCastInitialValues();
+
 	Widget->AddToViewport();
 }
 
