@@ -3,10 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayEffect.h"
 #include "GameFramework/Actor.h"
+#include "GameplayEffectTypes.h"
 #include "AuraEffectActor.generated.h"
 
-class UGameplayEffect;
+class UAbilitySystemComponent;
 
 UENUM(BlueprintType)
 enum class EEffectApplicationPolicy : uint8
@@ -49,21 +51,24 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Apply Effects")
 	TSubclassOf<UGameplayEffect> InstantGameplayEffectClass;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Apply Effects")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Apply Effects", meta=(EditCondition = "InstantGameplayEffectClass != nullptr", EditConditionHides))
 	EEffectApplicationPolicy InstantEffectApplicationPolicy{ EEffectApplicationPolicy::DoNotApply };
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Apply Effects")
 	TSubclassOf<UGameplayEffect> DurationGameplayEffectClass;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Apply Effects")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Apply Effects", meta=(EditCondition = "DurationGameplayEffectClass != nullptr", EditConditionHides))
 	EEffectApplicationPolicy DurationEffectApplicationPolicy{ EEffectApplicationPolicy::DoNotApply };
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Apply Effects")
 	TSubclassOf<UGameplayEffect> InfiniteGameplayEffectClass;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Apply Effects")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Apply Effects", meta=(EditCondition = "InfiniteGameplayEffectClass != nullptr", EditConditionHides))
 	EEffectApplicationPolicy InfiniteEffectApplicationPolicy{ EEffectApplicationPolicy::DoNotApply };
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Apply EffectsW")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Apply Effects", meta=(EditCondition = "InfiniteGameplayEffectClass != nullptr", EditConditionHides))
 	EEffectRemovalPolicy InfiniteEffectRemovalPolicy{ EEffectRemovalPolicy::RemoveOnEndOverlap };
+
+	UPROPERTY()
+	TMap<uint32, FActiveGameplayEffectHandle> ActiveRemovableInfiniteEffects;
 };
