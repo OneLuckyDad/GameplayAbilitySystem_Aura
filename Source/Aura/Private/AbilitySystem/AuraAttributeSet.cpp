@@ -2,7 +2,10 @@
 
 #include "AbilitySystem/AuraAttributeSet.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "GameplayEffectExtension.h"
+#include "GameFramework/Character.h"
 #include "Net/UnrealNetwork.h"
 
 UAuraAttributeSet::UAuraAttributeSet()
@@ -39,6 +42,14 @@ void UAuraAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, 
 	}
 }
 
+void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
+{
+	Super::PostGameplayEffectExecute(Data);
+	
+	FEffectProperties Properties = GetEffectProperties(Data);
+	
+}
+
 void UAuraAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UAuraAttributeSet, Health, OldHealth);
@@ -57,4 +68,43 @@ void UAuraAttributeSet::OnRep_Mana(const FGameplayAttributeData& OldMana) const
 void UAuraAttributeSet::OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UAuraAttributeSet, MaxMana, OldMaxMana);
+}
+
+FEffectProperties UAuraAttributeSet::GetEffectProperties(const FGameplayEffectModCallbackData& Data)
+{
+	FEffectProperties OutProperties;
+	
+	OutProperties.EffectContextHandle = Data.EffectSpec.GetContext();
+	
+	// Source
+	OutProperties.SourceAbilitySystemComponent = OutProperties.EffectContextHandle.GetOriginalInstigatorAbilitySystemComponent();
+	if (IsValid(OutProperties.SourceAbilitySystemComponent) &&
+		OutProperties.SourceAbilitySystemComponent->AbilityActorInfo.IsValid() &&
+		OutProperties.SourceAbilitySystemComponent->AbilityActorInfo->AvatarActor.IsValid())
+	{
+		OutProperties.SourceAvatarActor = OutProperties.SourceAbilitySystemComponent->AbilityActorInfo->AvatarActor.Get();
+		OutProperties.SourceController = OutProperties.SourceAbilitySystemComponent->AbilityActorInfo->PlayerController.Get();
+		if (!OutProperties.SourceController && OutProperties.SourceAvatarActor)
+		{
+			if (APawn* Pawn = Cast<APawn>(OutProperties.SourceAvatarActor))
+			{
+				OutProperties.SourceController = Pawn->GetController();
+			}
+		}
+		if (OutProperties.SourceController)
+		{
+			ACharacter* SourceCharacter = Cast<ACharacter>(OutProperties.SourceController->GetPawn()); 
+		}
+	}
+	
+	// Target
+	if (Data.Target.AbilityActorInfo.IsValid() && Data.Target.AbilityActorInfo->AvatarActor.IsValid())
+	{
+		OutProperties.TargetAvatarActor = Data.Target.AbilityActorInfo->AvatarActor.Get();	
+		OutProperties.TargetController = Data.Target.AbilityActorInfo->PlayerController.Get();
+		OutProperties.TargetCharacter = Cast<ACharacter>(OutProperties.TargetAvatarActor);
+		OutProperties.TargetAbilitySystemComponent = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OutProperties.TargetAvatarActor);
+	}
+	
+	return OutProperties;
 }
