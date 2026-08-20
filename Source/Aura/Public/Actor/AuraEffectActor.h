@@ -71,4 +71,7 @@ protected:
 
 	UPROPERTY()
 	TMap<uint32, FActiveGameplayEffectHandle> ActiveRemovableInfiniteEffects;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Apply Effects")
+	float ActorLevel{ 1.f };
 };
