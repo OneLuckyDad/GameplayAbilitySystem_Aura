@@ -2,6 +2,12 @@
 
 #include "Character/AuraCharacterBase.h"
 
+void AAuraCharacterBase::BeginPlay()
+{
+	Super::BeginPlay();
+	
+}
+
 AAuraCharacterBase::AAuraCharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = false;
@@ -16,9 +22,6 @@ UAbilitySystemComponent* AAuraCharacterBase::GetAbilitySystemComponent() const
 	return AbilitySystemComponent;
 }
 
-void AAuraCharacterBase::BeginPlay()
+void AAuraCharacterBase::InitAbilityActorInfo()
 {
-	Super::BeginPlay();
-	
 }
-
