@@ -57,6 +57,7 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
+	virtual void PreAttributeBaseChange(const FGameplayAttribute& Attribute, float& NewValue) const override;
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
@@ -89,5 +90,6 @@ public:
 	void OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const;
 	
 private:
-	static FEffectProperties GetEffectProperties(const FGameplayEffectModCallbackData& Data);	
+	static FEffectProperties GetEffectProperties(const FGameplayEffectModCallbackData& Data);
+	void ClampAttribute(const FGameplayAttribute& Attribute, float& NewValue) const;
 };
