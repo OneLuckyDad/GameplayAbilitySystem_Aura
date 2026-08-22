@@ -13,7 +13,7 @@ UAuraAttributeSet::UAuraAttributeSet()
 	InitMaxHealth(100.f);
 	InitMaxMana(50.f);
 
-	InitHealth(GetMaxHealth() * .5f);
+	InitHealth(10);
 	InitMana(GetMaxMana() * .5f);
 }
 
@@ -134,10 +134,10 @@ FEffectProperties UAuraAttributeSet::GetEffectProperties(const FGameplayEffectMo
 
 void UAuraAttributeSet::ClampAttribute(const FGameplayAttribute& Attribute, float& NewValue) const
 {
-	if (Attribute == GetHealthAttribute())
-	{
-		NewValue = FMath::Clamp(NewValue, 0.f, GetMaxHealth());
-	}
+	// if (Attribute == GetHealthAttribute())
+	// {
+	// 	NewValue = FMath::Clamp(NewValue, 0.f, GetMaxHealth());
+	// }
 	
 	if (Attribute == GetManaAttribute())
 	{
