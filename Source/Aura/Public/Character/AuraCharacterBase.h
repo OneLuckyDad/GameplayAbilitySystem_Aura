@@ -25,7 +25,8 @@ public:
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
 
 protected:
-	void InitPrimaryAttributes() const;
+	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
+	void InitDefaultAttributes() const;
 	virtual void InitAbilityActorInfo();
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
@@ -39,4 +40,7 @@ protected:
 	
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
 	TSubclassOf<UGameplayEffect> DefaultPrimaryAttributes;
+	
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
+	TSubclassOf<UGameplayEffect> DefaultSecondaryAttributes;
 };
