@@ -26,7 +26,7 @@ public:
 	// end Enemy Interface
 	
 	// Combat Interface
-	virtual int32 GetActorLevel() const override;
+	virtual int32 GetPlayerLevel() const override;
 	// end Combat Interface
 
 protected:
