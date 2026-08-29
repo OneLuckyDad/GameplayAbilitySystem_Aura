@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
 #include "AuraWidgetController.generated.h"
 
 class UAbilitySystemComponent;
@@ -36,7 +35,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetWidgetControllerParams(const FWidgetControllerParams& Params);
 
+	UFUNCTION(BlueprintCallable)
 	virtual void BroadCastInitialValues();
+	
 	virtual void BindCallbacksToDependencies();
 
 protected:
