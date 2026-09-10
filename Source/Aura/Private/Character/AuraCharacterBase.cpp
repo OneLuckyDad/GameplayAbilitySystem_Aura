@@ -3,6 +3,7 @@
 #include "Character/AuraCharacterBase.h"
 
 #include "AbilitySystemComponent.h"
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
 
 void AAuraCharacterBase::BeginPlay()
 {
@@ -45,4 +46,15 @@ void AAuraCharacterBase::InitDefaultAttributes() const
 
 void AAuraCharacterBase::InitAbilityActorInfo()
 {
+}
+
+void AAuraCharacterBase::AddCharacterAbilities()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+	
+	auto* AuraAbilitySystemComponent = CastChecked<UAuraAbilitySystemComponent>(AbilitySystemComponent);
+	AuraAbilitySystemComponent->AddCharacterAbilities(StartupAbilities);
 }
