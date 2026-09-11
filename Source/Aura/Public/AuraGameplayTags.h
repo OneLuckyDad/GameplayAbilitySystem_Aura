@@ -31,6 +31,13 @@ public:
 	FGameplayTag Attributes_Secondary_MaxHealth;
 	FGameplayTag Attributes_Secondary_MaxMana;
 	
+	FGameplayTag InputTag_LeftMouseButton;
+	FGameplayTag InputTag_RightMouseButton;
+	FGameplayTag InputTag_Key_1;
+	FGameplayTag InputTag_Key_2;
+	FGameplayTag InputTag_Key_3;
+	FGameplayTag InputTag_Key_4;
+	
 private:
 	static FAuraGameplayTags GameplayTags;
 };
