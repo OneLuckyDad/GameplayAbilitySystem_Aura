@@ -7,6 +7,7 @@
 #include "GameFramework/PlayerController.h"
 #include "AuraPlayerController.generated.h"
 
+class UAuraAbilitySystemComponent;
 class UAuraInputConfig;
 class IEnemyInterface;
 class UInputAction;
@@ -20,14 +21,16 @@ class AURA_API AAuraPlayerController : public APlayerController
 
 public:
 	AAuraPlayerController();
-
+	
 	virtual void PlayerTick(float DeltaTime) override;
 
 protected:
+	virtual void BeginPlayingState() override;
+	virtual void EndPlayingState() override;;
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 
-private:
+private:	
 	void Move(const FInputActionValue& InputActionValue);
 	
 	void AbilityInputTagPressed(FGameplayTag InputTag);
@@ -45,6 +48,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UAuraInputConfig> InputConfig;
 
+	UPROPERTY(Transient)
+	TObjectPtr<UAuraAbilitySystemComponent> AuraAbilitySystemComponent;
+	
 	TScriptInterface<IEnemyInterface> LastActor{ nullptr };
 	TScriptInterface<IEnemyInterface> ThisActor{ nullptr };
 };
