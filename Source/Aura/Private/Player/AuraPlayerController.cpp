@@ -4,6 +4,8 @@
 
 #include "AuraGameplayTags.h"
 #include "EnhancedInputSubsystems.h"
+#include "NavigationPath.h"
+#include "NavigationSystem.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Components/SplineComponent.h"
 #include "Inputs/AuraInputComponent.h"
@@ -91,43 +93,67 @@ void AAuraPlayerController::AbilityInputTagPressed(const FGameplayTag InputTag)
 }
 
 void AAuraPlayerController::AbilityInputTagReleased(const FGameplayTag InputTag)
-{
-	if (AuraAbilitySystemComponent)
+{	
+	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LeftMouseButton))
 	{
-		AuraAbilitySystemComponent->AbilityInputTagReleased(InputTag);	
-	}	
+		if (bTargeting && AuraAbilitySystemComponent)
+		{
+			AuraAbilitySystemComponent->AbilityInputTagReleased(InputTag);
+		}
+		else if (!bTargeting)
+		{
+			const TObjectPtr<APawn> ControlledPawn = GetPawn();
+			if (ControlledPawn && FollowTime <= ShortPressThreshold)
+			{
+				if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CachedDestination))
+				{
+					Spline->ClearSplinePoints();
+					for (const FVector& PointLocation : NavPath->PathPoints)
+					{
+						Spline->AddSplineWorldPoint(PointLocation);
+						DrawDebugSphere(GetWorld(), PointLocation, 8.f, 8, FColor::Green, false, 5.f);
+					}
+					bAutoRunning = true;
+				}
+			}
+		}
+		FollowTime = 0.f;
+		bTargeting = false;
+	}
+	else if (AuraAbilitySystemComponent)
+	{
+		AuraAbilitySystemComponent->AbilityInputTagReleased(InputTag);
+	}
 }
 
 void AAuraPlayerController::AbilityInputTagHeld(const FGameplayTag InputTag)
 {
-	if (AuraAbilitySystemComponent && !InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LeftMouseButton))
+	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LeftMouseButton))
 	{
-		AuraAbilitySystemComponent->AbilityInputTagHeld(InputTag);
-		return;
-	}
-	
-	if (bTargeting)
-	{
-		if (AuraAbilitySystemComponent)
+		if (bTargeting && AuraAbilitySystemComponent)
 		{
 			AuraAbilitySystemComponent->AbilityInputTagHeld(InputTag);
 		}
-	}
-	else
-	{
-		FollowTime += GetWorld()->GetDeltaSeconds();
+		else if (!bTargeting)
+		{
+			FollowTime += GetWorld()->GetDeltaSeconds();
 
-		if (FHitResult Hit;
-			GetHitResultUnderCursor(ECC_Visibility, false, Hit))
-		{
-			CachedDestination = Hit.ImpactPoint;
-		}
+			if (FHitResult Hit;
+				GetHitResultUnderCursor(ECC_Visibility, false, Hit))
+			{
+				CachedDestination = Hit.ImpactPoint;
+			}
 		
-		if (const auto ControlledPawn = GetPawn())
-		{
-			const FVector WorldDirection =  (CachedDestination - ControlledPawn->GetActorLocation()).GetSafeNormal();
-			ControlledPawn->AddMovementInput(WorldDirection);
+			if (const auto ControlledPawn = GetPawn())
+			{
+				const FVector WorldDirection =  (CachedDestination - ControlledPawn->GetActorLocation()).GetSafeNormal();
+				ControlledPawn->AddMovementInput(WorldDirection);
+			}
 		}
+	}
+	else if (AuraAbilitySystemComponent)
+	{
+		AuraAbilitySystemComponent->AbilityInputTagHeld(InputTag);
 	}
 }
 
