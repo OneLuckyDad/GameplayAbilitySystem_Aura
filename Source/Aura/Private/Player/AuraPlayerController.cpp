@@ -23,6 +23,7 @@ void AAuraPlayerController::PlayerTick(const float DeltaTime)
 	Super::PlayerTick(DeltaTime);
 
 	CursorTrace();
+	TickAutoRun();
 }
 
 void AAuraPlayerController::BeginPlayingState()
@@ -83,6 +84,23 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 	}
 }
 
+void AAuraPlayerController::TickAutoRun()
+{
+	if (const TObjectPtr<APawn> ControlledPawn = GetPawn();
+		bAutoRunning && ControlledPawn)
+	{
+		const FVector LocationOnSpline = Spline->FindLocationClosestToWorldLocation(ControlledPawn->GetActorLocation(), ESplineCoordinateSpace::World);
+		const FVector Direction = Spline->FindDirectionClosestToWorldLocation(LocationOnSpline, ESplineCoordinateSpace::World);
+		ControlledPawn->AddMovementInput(Direction);
+
+		if (const float DistanceToDestinationSquared = (LocationOnSpline - CachedDestination).SquaredLength();
+			DistanceToDestinationSquared <= AutoRunAcceptanceRadius * AutoRunAcceptanceRadius)
+		{
+			bAutoRunning = false;
+		}
+	}
+}
+
 void AAuraPlayerController::AbilityInputTagPressed(const FGameplayTag InputTag)
 {
 	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LeftMouseButton))
@@ -102,8 +120,8 @@ void AAuraPlayerController::AbilityInputTagReleased(const FGameplayTag InputTag)
 		}
 		else if (!bTargeting)
 		{
-			const TObjectPtr<APawn> ControlledPawn = GetPawn();
-			if (ControlledPawn && FollowTime <= ShortPressThreshold)
+			if (const TObjectPtr<APawn> ControlledPawn = GetPawn();
+				ControlledPawn && FollowTime <= ShortPressThreshold)
 			{
 				if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CachedDestination))
 				{
@@ -113,6 +131,7 @@ void AAuraPlayerController::AbilityInputTagReleased(const FGameplayTag InputTag)
 						Spline->AddSplineWorldPoint(PointLocation);
 						DrawDebugSphere(GetWorld(), PointLocation, 8.f, 8, FColor::Green, false, 5.f);
 					}
+					CachedDestination = NavPath->PathPoints.Last();
 					bAutoRunning = true;
 				}
 			}
@@ -144,7 +163,7 @@ void AAuraPlayerController::AbilityInputTagHeld(const FGameplayTag InputTag)
 				CachedDestination = Hit.ImpactPoint;
 			}
 		
-			if (const auto ControlledPawn = GetPawn())
+			if (const TObjectPtr<APawn> ControlledPawn = GetPawn())
 			{
 				const FVector WorldDirection =  (CachedDestination - ControlledPawn->GetActorLocation()).GetSafeNormal();
 				ControlledPawn->AddMovementInput(WorldDirection);
