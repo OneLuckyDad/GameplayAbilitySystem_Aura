@@ -12,6 +12,7 @@ class UAuraInputConfig;
 class IEnemyInterface;
 class UInputAction;
 class UInputMappingContext;
+class USplineComponent;
 struct FInputActionValue;
 
 UCLASS()
@@ -39,6 +40,9 @@ private:
 	
 	void CursorTrace();
 
+	UPROPERTY(Transient)
+	TObjectPtr<UAuraAbilitySystemComponent> AuraAbilitySystemComponent;
+	
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<UInputMappingContext> AuraContext;
 
@@ -47,10 +51,26 @@ private:
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UAuraInputConfig> InputConfig;
-
-	UPROPERTY(Transient)
-	TObjectPtr<UAuraAbilitySystemComponent> AuraAbilitySystemComponent;
 	
+	// Point and click movement
+	FVector CachedDestination{ FVector::ZeroVector };
+	
+	UPROPERTY(VisibleAnywhere, Category = "Point and click movement")
+	TObjectPtr<USplineComponent> Spline;
+	
+	float FollowTime{ 0.0f };
+	float ShortPressThreshold{ 0.5f };
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Point and click movement")
+	float AutoRunAcceptanceRadius{ 50.0f };
+	
+	bool bAutoRunning{ false };
+	bool bTargeting{ false };
+	
+	// Highlighting enemy under cursor
+	UPROPERTY(Transient)
 	TScriptInterface<IEnemyInterface> LastActor{ nullptr };
+	
+	UPROPERTY(Transient)
 	TScriptInterface<IEnemyInterface> ThisActor{ nullptr };
 };
