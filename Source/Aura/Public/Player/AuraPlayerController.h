@@ -74,4 +74,6 @@ private:
 	
 	UPROPERTY(Transient)
 	TScriptInterface<IEnemyInterface> ThisActor{ nullptr };
+	
+	FHitResult CursorHit;
 };
