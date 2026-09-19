@@ -2,6 +2,7 @@
 
 #include "AuraAssetManager.h"
 
+#include "AbilitySystemGlobals.h"
 #include "AuraGameplayTags.h"
 
 UAuraAssetManager& UAuraAssetManager::Get()
@@ -16,4 +17,5 @@ void UAuraAssetManager::StartInitialLoading()
 	Super::StartInitialLoading();
 	
 	FAuraGameplayTags::Get().InitializeNativeGameplayTags();
+	UAbilitySystemGlobals::Get().InitGlobalData(); // Not needed in UE 5.3+ but harmless to leave there
 }
