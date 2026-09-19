@@ -18,7 +18,7 @@ public:
 	static UTargetDataUnderMouse* CreateTargetDataUnderMouse(UGameplayAbility* OwningAbility);
 	
 	UPROPERTY(BlueprintAssignable)
-	FMouseTargetDataSignature ValidData;
+	FMouseTargetDataSignature OnTargetDataValid;
 	
 protected:
 	virtual void Activate() override;

@@ -65,23 +65,9 @@ void AAuraPlayerController::SetupInputComponent()
 	auto* AuraInputComponent = CastChecked<UAuraInputComponent>(InputComponent);
 
 	AuraInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ThisClass::Move);
+	AuraInputComponent->BindAction(ShiftAction, ETriggerEvent::Started, this, &ThisClass::ShiftPressed);
+	AuraInputComponent->BindAction(ShiftAction, ETriggerEvent::Completed, this, &ThisClass::ShiftPressed);
 	AuraInputComponent->BindAbilityActions(InputConfig, this, &ThisClass::AbilityInputTagPressed, &ThisClass::AbilityInputTagReleased, &ThisClass::AbilityInputTagHeld);
-}
-
-void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
-{
-	const FVector2D InputAxisVector = InputActionValue.Get<FVector2D>();
-	const FRotator Rotation = GetControlRotation();
-	const FRotator YawRotation(0, Rotation.Yaw, 0);
-
-	const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-
-	if (APawn* ControlledPawn = GetPawn<APawn>())
-	{
-		ControlledPawn->AddMovementInput(ForwardDirection, InputAxisVector.Y);
-		ControlledPawn->AddMovementInput(RightDirection, InputAxisVector.X);
-	}
 }
 
 void AAuraPlayerController::TickAutoRun()
@@ -101,6 +87,22 @@ void AAuraPlayerController::TickAutoRun()
 	}
 }
 
+void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
+{
+	const FVector2D InputAxisVector = InputActionValue.Get<FVector2D>();
+	const FRotator Rotation = GetControlRotation();
+	const FRotator YawRotation(0, Rotation.Yaw, 0);
+
+	const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+
+	if (APawn* ControlledPawn = GetPawn<APawn>())
+	{
+		ControlledPawn->AddMovementInput(ForwardDirection, InputAxisVector.Y);
+		ControlledPawn->AddMovementInput(RightDirection, InputAxisVector.X);
+	}
+}
+
 void AAuraPlayerController::AbilityInputTagPressed(const FGameplayTag InputTag)
 {
 	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LeftMouseButton))
@@ -114,11 +116,12 @@ void AAuraPlayerController::AbilityInputTagReleased(const FGameplayTag InputTag)
 {	
 	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LeftMouseButton))
 	{
-		if (bTargeting && AuraAbilitySystemComponent)
+		if (AuraAbilitySystemComponent)
 		{
 			AuraAbilitySystemComponent->AbilityInputTagReleased(InputTag);
 		}
-		else if (!bTargeting)
+
+		if (!bTargeting && !bShiftKeyDown)
 		{
 			if (const TObjectPtr<APawn> ControlledPawn = GetPawn();
 				ControlledPawn && FollowTime <= ShortPressThreshold)
@@ -148,11 +151,12 @@ void AAuraPlayerController::AbilityInputTagHeld(const FGameplayTag InputTag)
 {
 	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LeftMouseButton))
 	{
-		if (bTargeting && AuraAbilitySystemComponent)
+		if (const bool bIsMovementInput = !bTargeting && !bShiftKeyDown;
+			!bIsMovementInput && AuraAbilitySystemComponent)
 		{
 			AuraAbilitySystemComponent->AbilityInputTagHeld(InputTag);
 		}
-		else if (!bTargeting)
+		else if (bIsMovementInput)
 		{
 			FollowTime += GetWorld()->GetDeltaSeconds();
 
