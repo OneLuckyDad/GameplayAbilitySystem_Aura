@@ -30,7 +30,7 @@ public:
 
 protected:
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
-	void InitDefaultAttributes() const;
+	virtual void InitDefaultAttributes() const;
 	virtual void InitAbilityActorInfo();
 	void AddCharacterAbilities();
 	
