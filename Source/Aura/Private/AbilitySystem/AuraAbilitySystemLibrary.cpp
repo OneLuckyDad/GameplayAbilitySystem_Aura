@@ -10,12 +10,11 @@
 #include "UI/HUD/AuraHUD.h"
 #include "UI/WidgetController/AuraWidgetController.h"
 
-void UAuraAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldContextObject, UAbilitySystemComponent* AbilitySystemComponent, ECharacterClass CharacterClass, float Level)
+void UAuraAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldContextObject, UAbilitySystemComponent* AbilitySystemComponent, const ECharacterClass CharacterClass, const float Level)
 {
 	const auto* AuraGameMode = CastChecked<AAuraGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
-	
-	AActor* AvatarActor = AbilitySystemComponent->GetAvatarActor();
-	
+
+	const AActor* AvatarActor = AbilitySystemComponent->GetAvatarActor();
 	const UCharacterClassInfo* CharacterClassInfo = AuraGameMode->CharacterClassInfo;
 	const FCharacterClassDefaultInfo ClassDefaultInfo = CharacterClassInfo->GetClassDefaultInfo(CharacterClass);
 	
