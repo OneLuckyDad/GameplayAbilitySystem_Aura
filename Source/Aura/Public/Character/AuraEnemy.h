@@ -41,11 +41,19 @@ protected:
 	virtual void InitAbilityActorInfo() override;
 	void InitHealthWidget();
 	
+	void HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Default")
 	ECharacterClass CharacterClass{ ECharacterClass::Warrior };
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Default")
 	int32 Level{ 1 };
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	float BaseWalkSpeed{ 250.f };
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Combat")
+	bool bHitReacting{ false };
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UWidgetComponent> HealthBar;

@@ -27,6 +27,8 @@ public:
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
 	
 	virtual FVector GetCombatSocketLocation() const override;
+	virtual UAnimMontage* GetHitReactAnimMontage_Implementation() override;
+	
 
 protected:
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
@@ -58,4 +60,7 @@ protected:
 private:
 	UPROPERTY(EditAnywhere, Category = "Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
+	
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	TObjectPtr<UAnimMontage> HitReactAnimMontage;
 };
