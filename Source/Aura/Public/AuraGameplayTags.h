@@ -13,6 +13,7 @@ class AURA_API FAuraGameplayTags
 {
 public:
 	static FAuraGameplayTags& Get() { return GameplayTags; };
+	
 	void InitializeNativeGameplayTags();
 	
 	FGameplayTag Attributes_Primary_Strength;
@@ -31,6 +32,8 @@ public:
 	FGameplayTag Attributes_Secondary_MaxHealth;
 	FGameplayTag Attributes_Secondary_MaxMana;
 	
+	FGameplayTag Damage;
+	
 	FGameplayTag InputTag_LeftMouseButton;
 	FGameplayTag InputTag_RightMouseButton;
 	FGameplayTag InputTag_Key_1;
@@ -39,5 +42,7 @@ public:
 	FGameplayTag InputTag_Key_4;
 	
 private:
+	FAuraGameplayTags() = default;
+	
 	static FAuraGameplayTags GameplayTags;
 };

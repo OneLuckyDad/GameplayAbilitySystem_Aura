@@ -4,6 +4,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "AuraGameplayTags.h"
 #include "Actor/AuraProjectile.h"
 #include "Interaction/CombatInterface.h"
 
@@ -12,9 +13,9 @@ void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
-void UAuraProjectileSpell::SpawnProjectile(FVector ProjectileTargetLocation)
+void UAuraProjectileSpell::SpawnProjectile(const FVector ProjectileTargetLocation) const
 {
-	if (const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority())
+	if (GetAvatarActorFromActorInfo()->HasAuthority())
 	{
 		if (const auto* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo()))
 		{
@@ -27,17 +28,18 @@ void UAuraProjectileSpell::SpawnProjectile(FVector ProjectileTargetLocation)
 			SpawnTransform.SetLocation(SocketLocation);
 			SpawnTransform.SetRotation(Rotation.Quaternion());
 			
-			// TODO: Set the projectile location
-			
 			auto* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(
 				ProjectileClass,
 				SpawnTransform,
 				GetOwningActorFromActorInfo(),
 				Cast<APawn>(GetOwningActorFromActorInfo()),
 				ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
-			
-			UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
-			FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), SourceASC->MakeEffectContext());
+
+			const UAbilitySystemComponent* SourceAbilitySystemComponent = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
+			const FGameplayEffectSpecHandle SpecHandle = SourceAbilitySystemComponent->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), SourceAbilitySystemComponent->MakeEffectContext());
+
+			const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
+			UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GameplayTags.Damage, 50.f);
 			Projectile->DamageEffectSpecHandle = SpecHandle;
 			
 			Projectile->FinishSpawning(SpawnTransform);

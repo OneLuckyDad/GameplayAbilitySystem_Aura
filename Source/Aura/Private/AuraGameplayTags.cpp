@@ -26,6 +26,10 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	Attributes_Secondary_MaxHealth = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.MaxHealth"), FString("Maximum amount of health obtainable"));
 	Attributes_Secondary_MaxMana = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.MaxMana"), FString("Maximum amount of mana obtainable"));
 
+	// Damage tags
+	
+	Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Damage"), FString("Damage"));
+	
 	// Input tags
 	InputTag_LeftMouseButton = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("InputTag.LeftMouseButton"), FString("InputTag for Left Mouse Button"));
 	InputTag_RightMouseButton = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("InputTag.RightMouseButton"), FString("InputTag for Right Mouse Button"));
