@@ -29,7 +29,11 @@ public:
 	virtual FVector GetCombatSocketLocation() const override;
 	virtual UAnimMontage* GetHitReactAnimMontage_Implementation() override;
 	
-
+	virtual void Die() override;
+	
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void MulticastHandleDeath();
+	
 protected:
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
 	virtual void InitDefaultAttributes() const;

@@ -64,6 +64,13 @@ int32 AAuraEnemy::GetPlayerLevel() const
 	return Level;
 }
 
+void AAuraEnemy::Die()
+{
+	Super::Die();
+	
+	SetLifeSpan(LifespanOnDeath);
+}
+
 void AAuraEnemy::InitDefaultAttributes() const
 {
 	UAuraAbilitySystemLibrary::InitializeDefaultAttributes(this, AbilitySystemComponent, CharacterClass, Level);
