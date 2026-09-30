@@ -63,6 +63,8 @@ void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 	GetMesh()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
 	
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	
+	Dissolve();
 }
 
 void AAuraCharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, const float Level) const
@@ -97,4 +99,24 @@ void AAuraCharacterBase::AddCharacterAbilities()
 	
 	auto* AuraAbilitySystemComponent = CastChecked<UAuraAbilitySystemComponent>(AbilitySystemComponent);
 	AuraAbilitySystemComponent->AddCharacterAbilities(StartupAbilities);
+}
+
+void AAuraCharacterBase::Dissolve()
+{
+	TArray<UMaterialInstanceDynamic*> DissolvingMaterialInstances;
+	
+	if (IsValid(CharacterDissolveMaterialInstance))
+	{
+		DissolvingMaterialInstances.Emplace(UMaterialInstanceDynamic::Create(CharacterDissolveMaterialInstance, this));
+		ensureMsgf(GetMesh()->GetNumMaterials() == 1, TEXT("We are assuming a single material for the character. If we have multiple materials we would need a dissolve material for each."));
+		GetMesh()->SetMaterial(0, DissolvingMaterialInstances.Last());
+	}
+	if (IsValid(WeaponDissolveMaterialInstance))
+	{
+		DissolvingMaterialInstances.Emplace(UMaterialInstanceDynamic::Create(WeaponDissolveMaterialInstance, this));
+		ensureMsgf(Weapon->GetNumMaterials() == 1, TEXT("We are assuming a single material for the weapon. If we have multiple materials we would need a dissolve material for each."));
+		Weapon->SetMaterial(0, DissolvingMaterialInstances.Last());
+	}
+	
+	StartDissolveTimeline(DissolvingMaterialInstances);
 }

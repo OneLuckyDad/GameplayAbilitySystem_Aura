@@ -40,6 +40,11 @@ protected:
 	virtual void InitAbilityActorInfo();
 	void AddCharacterAbilities();
 	
+	void Dissolve();
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartDissolveTimeline(const TArray<UMaterialInstanceDynamic*>& DynamicMaterialsArray);
+	
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TObjectPtr<USkeletalMeshComponent> Weapon;
 	
@@ -60,6 +65,12 @@ protected:
 	
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
 	TSubclassOf<UGameplayEffect> DefaultVitalAttributes;
+	
+	UPROPERTY(EditAnywhere, Category = "Dissolve effect")
+	TObjectPtr<UMaterialInstance> CharacterDissolveMaterialInstance;
+	
+	UPROPERTY(EditAnywhere, Category = "Dissolve effect")
+	TObjectPtr<UMaterialInstance> WeaponDissolveMaterialInstance;
 	
 private:
 	UPROPERTY(EditAnywhere, Category = "Abilities")
