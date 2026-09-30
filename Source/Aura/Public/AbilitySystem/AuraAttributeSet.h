@@ -195,4 +195,5 @@ public:
 private:
 	static FEffectProperties GetEffectProperties(const FGameplayEffectModCallbackData& Data);
 	void ClampAttribute(const FGameplayAttribute& Attribute, float& NewValue) const;
+	static void ShowFloatingText(const FEffectProperties& Properties, float Damage);
 };

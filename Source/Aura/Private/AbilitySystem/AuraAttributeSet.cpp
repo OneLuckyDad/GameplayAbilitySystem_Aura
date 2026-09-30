@@ -8,7 +8,9 @@
 #include "GameplayEffectExtension.h"
 #include "GameFramework/Character.h"
 #include "Interaction/CombatInterface.h"
+#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
+#include "Player/AuraPlayerController.h"
 
 UAuraAttributeSet::UAuraAttributeSet()
 {
@@ -110,6 +112,8 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 			{
 				CombatInterface->Die();
 			}
+			
+			ShowFloatingText(Properties, LocalIncomingDamage);
 		}
 	}
 }
@@ -217,7 +221,7 @@ FEffectProperties UAuraAttributeSet::GetEffectProperties(const FGameplayEffectMo
 		}
 		if (OutProperties.SourceController)
 		{
-			ACharacter* SourceCharacter = Cast<ACharacter>(OutProperties.SourceController->GetPawn()); 
+			OutProperties.SourceCharacter = Cast<ACharacter>(OutProperties.SourceController->GetPawn()); 
 		}
 	}
 	
@@ -248,5 +252,16 @@ void UAuraAttributeSet::ClampAttribute(const FGameplayAttribute& Attribute, floa
 	if (Attribute == GetMaxHealthAttribute() || Attribute == GetMaxManaAttribute())
 	{
 		NewValue = FMath::Max(NewValue, 1.f);
+	}
+}
+
+void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Properties, const float Damage)
+{
+	if (Properties.SourceCharacter != Properties.TargetCharacter)
+	{
+		if (auto* PlayerController = Cast<AAuraPlayerController>(UGameplayStatics::GetPlayerController(Properties.SourceCharacter, 0)))
+		{
+			PlayerController->ShowDamageNumber(Properties.TargetCharacter, Damage);
+		}
 	}
 }

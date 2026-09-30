@@ -8,8 +8,10 @@
 #include "NavigationSystem.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Components/SplineComponent.h"
+#include "GameFramework/Character.h"
 #include "Inputs/AuraInputComponent.h"
 #include "Interaction/EnemyInterface.h"
+#include "UI/Widgets/DamageTextComponent.h"
 
 AAuraPlayerController::AAuraPlayerController()
 {
@@ -24,6 +26,19 @@ void AAuraPlayerController::PlayerTick(const float DeltaTime)
 
 	CursorTrace();
 	TickAutoRun();
+}
+
+void AAuraPlayerController::ShowDamageNumber_Implementation(ACharacter* TargetCharacter, const float Damage)
+{
+	if (IsValid(TargetCharacter) && DamageTextComponentClass)
+	{
+		auto* DamageText = NewObject<UDamageTextComponent>(TargetCharacter, DamageTextComponentClass);
+		DamageText->RegisterComponent();
+		DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+		// Widget animation will start here after attachment, so we can now remove it
+		DamageText->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
+		DamageText->SetDamageText(Damage);
+	}
 }
 
 void AAuraPlayerController::BeginPlayingState()
