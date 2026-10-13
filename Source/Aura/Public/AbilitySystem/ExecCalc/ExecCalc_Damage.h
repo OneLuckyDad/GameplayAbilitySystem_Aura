@@ -1,4 +1,4 @@
-﻿// Copyright OneLuckyDad
+// Copyright OneLuckyDad
 
 #pragma once
 
@@ -11,6 +11,7 @@ struct FAuraDamageStatics
 	static const FAuraDamageStatics& Get();
 	
 	DECLARE_ATTRIBUTE_CAPTUREDEF(Armor);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(BlockChance);
 	
 private:
 	FAuraDamageStatics();
