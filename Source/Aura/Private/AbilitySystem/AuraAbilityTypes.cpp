@@ -108,3 +108,15 @@ bool FAuraGameplayEffectContext::NetSerialize(FArchive& Ar, class UPackageMap* M
 	bOutSuccess = true;
 	return true; 
 }
+
+FAuraGameplayEffectContext* FAuraGameplayEffectContext::Duplicate() const
+{
+	auto* NewContext = new FAuraGameplayEffectContext();
+	*NewContext = *this;
+	if (GetHitResult())
+	{
+		// Does a deep copy of the hit result
+		NewContext->AddHitResult(*GetHitResult(), true);
+	}
+	return NewContext;
+}

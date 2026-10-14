@@ -16,8 +16,19 @@ struct FAuraGameplayEffectContext : public FGameplayEffectContext
 	
 	virtual UScriptStruct* GetScriptStruct() const override; // This must be overridden by every subclass!
 	virtual bool NetSerialize(FArchive& Ar, class UPackageMap* Map, bool& bOutSuccess) override; // This must be overridden by every subclass!
+	virtual FAuraGameplayEffectContext* Duplicate() const;
 	
 protected:
 	bool bIsBlockHit{ false };
 	bool bIsCriticalHit{ false };
+};
+
+template<>
+struct TStructOpsTypeTraits<FAuraGameplayEffectContext> : public TStructOpsTypeTraitsBase2<FAuraGameplayEffectContext>
+{
+	enum
+	{
+		WithNetSerializer = true,
+		WithCopy = true,
+	};
 };
