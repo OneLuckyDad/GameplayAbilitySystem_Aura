@@ -28,7 +28,7 @@ void AAuraPlayerController::PlayerTick(const float DeltaTime)
 	TickAutoRun();
 }
 
-void AAuraPlayerController::ShowDamageNumber_Implementation(ACharacter* TargetCharacter, const float Damage)
+void AAuraPlayerController::ShowDamageNumber_Implementation(ACharacter* TargetCharacter, float Damage, bool bIsBlockedHit, bool bIsCriticalHit)
 {
 	if (IsValid(TargetCharacter) && DamageTextComponentClass)
 	{
@@ -37,7 +37,7 @@ void AAuraPlayerController::ShowDamageNumber_Implementation(ACharacter* TargetCh
 		DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 		// Widget animation will start here after attachment, so we can now remove it
 		DamageText->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
-		DamageText->SetDamageText(Damage);
+		DamageText->SetDamageText(Damage, bIsBlockedHit, bIsCriticalHit);
 	}
 }
 
