@@ -8,10 +8,10 @@ struct FAuraGameplayEffectContext : public FGameplayEffectContext
 {
 	GENERATED_BODY()
 	
-	bool IsBlockHit() const { return bIsBlockHit; }
+	bool IsBlockedHit() const { return bIsBlockedHit; }
 	bool IsCriticalHit() const { return bIsCriticalHit; }
 	
-	void SetIsBlockHit(bool Value) { bIsBlockHit = Value; }
+	void SetIsBlockHit(bool Value) { bIsBlockedHit = Value; }
 	void SetIsCriticalHit(bool Value) { bIsCriticalHit = Value; }
 	
 	virtual UScriptStruct* GetScriptStruct() const override; // This must be overridden by every subclass!
@@ -20,7 +20,7 @@ struct FAuraGameplayEffectContext : public FGameplayEffectContext
 	
 protected:
 	UPROPERTY()
-	bool bIsBlockHit{ false };
+	bool bIsBlockedHit{ false };
 	
 	UPROPERTY()
 	bool bIsCriticalHit{ false };

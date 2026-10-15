@@ -6,6 +6,7 @@
 #include "AbilitySystemComponent.h"
 #include "AuraGameplayTags.h"
 #include "GameplayEffectExtension.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "GameFramework/Character.h"
 #include "Interaction/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
@@ -113,7 +114,9 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 				CombatInterface->Die();
 			}
 			
-			ShowFloatingText(Properties, LocalIncomingDamage);
+			const bool bIsBlockedHit = UAuraAbilitySystemLibrary::IsBlockedHit(Properties.EffectContextHandle);
+			const bool bIsCriticalHit = UAuraAbilitySystemLibrary::IsCriticalHit(Properties.EffectContextHandle);
+			ShowFloatingText(Properties, LocalIncomingDamage, bIsBlockedHit, bIsCriticalHit);
 		}
 	}
 }
@@ -255,7 +258,7 @@ void UAuraAttributeSet::ClampAttribute(const FGameplayAttribute& Attribute, floa
 	}
 }
 
-void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Properties, const float Damage)
+void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Properties, const float Damage, bool bIsBlockedHit, bool bIsCriticalHit)
 {
 	if (Properties.SourceCharacter != Properties.TargetCharacter)
 	{
