@@ -19,7 +19,10 @@ struct FAuraGameplayEffectContext : public FGameplayEffectContext
 	virtual FAuraGameplayEffectContext* Duplicate() const;
 	
 protected:
+	UPROPERTY()
 	bool bIsBlockHit{ false };
+	
+	UPROPERTY()
 	bool bIsCriticalHit{ false };
 };
 
